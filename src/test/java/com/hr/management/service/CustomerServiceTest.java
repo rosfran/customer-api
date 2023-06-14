@@ -46,7 +46,7 @@ class CustomerServiceTest {
     private CustomerResponseMapper customerResponseMapper;
 
     @Captor
-    private ArgumentCaptor<Customer> recipeCaptor;
+    private ArgumentCaptor<Customer> customerCaptor;
 
     /**
      * Method under test: {@link CustomerService#getById(long)}
@@ -84,7 +84,7 @@ class CustomerServiceTest {
      * Method under test: {@link CustomerService#create(CustomerRequest)}
      */
     @Test
-    void create_should_throwElementAlreadyExistsException_when_RecipeAlreadyExists() {
+    void create_should_throwElementAlreadyExistsException_when_CustomerAlreadyExists() {
         CustomerRequest request = CustomerRequest.builder()
                 .firstName("James")
                 .lastName("Munt")
@@ -108,7 +108,7 @@ class CustomerServiceTest {
      * Method under test: {@link CustomerService#update(CustomerRequest)}
      */
     @Test
-    void update_should_throwElementAlreadyExistsException_when_RecipeAlreadyExists() {
+    void update_should_throwElementAlreadyExistsException_when_CustomerAlreadyExists() {
         Customer customer = Customer.builder()
                 .id(101L)
                 .firstName("Gepeto")
@@ -138,14 +138,14 @@ class CustomerServiceTest {
      * Method under test: {@link CustomerService#deleteById(long)}
      */
     @Test
-    void deleteById_should_deleteRecipes_when_IsFound() {
+    void deleteById_should_deleteCustomers_when_IsFound() {
         Customer customer =  Customer.builder().id(101L).firstName("Gepeto").build();
 
         when(customerRepository.findById(101L)).thenReturn(Optional.of(customer));
 
         customerService.deleteById(101L);
-        verify(customerRepository).delete(recipeCaptor.capture());
-        Customer capturedCustomer = recipeCaptor.getValue();
+        verify(customerRepository).delete(customerCaptor.capture());
+        Customer capturedCustomer = customerCaptor.getValue();
 
         assertEquals(101L, capturedCustomer.getId());
         assertEquals("Gepeto", capturedCustomer.getFirstName());
@@ -155,7 +155,7 @@ class CustomerServiceTest {
      * Method under test: {@link CustomerService#deleteById(long)}
      */
     @Test
-    void deleteById_should_throwNoSuchElementFoundException_when_RecipesIsNotFound() {
+    void deleteById_should_throwNoSuchElementFoundException_when_CustomersIsNotFound() {
         long id = 101L;
         when(customerRepository.findById(id)).thenReturn(Optional.empty());
 

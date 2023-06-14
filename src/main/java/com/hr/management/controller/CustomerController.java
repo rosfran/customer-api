@@ -98,11 +98,11 @@ public class CustomerController {
 
         Pageable page = PageRequest.of(pageNum, pageSize, s);
 
-        List<CustomerResponse> RecipeResult = customerService.findBySearchCriteria(criteriaBuilder.build(), page);
+        List<CustomerResponse> result = customerService.findBySearchCriteria(criteriaBuilder.build(), page);
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new ApiPagedResponse<>( SUCCESS,  RecipeResult, pageNum, pageSize, RecipeResult.size()));
+                .body(new ApiPagedResponse<>( SUCCESS,  result, pageNum, pageSize, result.size()));
     }
 
     /**

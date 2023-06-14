@@ -21,7 +21,7 @@ should be able to filter available customers based on one or more of the followi
 3. Text search within the instructions.
    For example, the API should be able to handle the following search requests:
    • Customers with age greater that 35 and live in Amstelveen
-   • Customers without “salmon” as an address that has “oven” in the instructions.
+   • Customers without “Amstelveen” as an address (city field).
 
 ### Requirements
    Please ensure that we have some documentation about the architectural choices and also how to run the application. The project is expected to be delivered as a GitHub (or any other public git hosting) repository URL.
@@ -78,8 +78,9 @@ To just get a specific customer, you can just use the name as a query parameter 
 ```
 ### Technical Solution
 
-The solution is implemented in a layered structure, based on the MVC: `controllers` (where we implement REST API endpoints - they are the point of contact with the Users), 
-`services` (which interfaces with the controllers on actions which implements high level requirements and coordinates actions among other services), repositories (which access the permanent storage),
+The solution is implemented in a layered structure (sometimes called hexagonal architecture), based on the MVC: `controllers` (where we implement REST API endpoints - 
+they are the point of contact with the Users), `services` (which interfaces with the controllers on actions which implements high level requirements and coordinates 
+actions among other services), repositories (which access the permanent storage).
 The technologies used for the REST API were: Java 17, Spring Boot, Spring Framework, Spring Security, Spring Data JPA, Hibernate, PostgreSQL, etc.
 
 The database used was PostgreSQL 14.6.
@@ -113,7 +114,7 @@ Example below (it is on 40% of code coverage):
 
 It is possible to test it using Postman. There is an exported file with a Postman colletion to test the endpoints:
 
-[Recipe_control_api.postman_collection.json](Recipe_control_api.postman_collection.json)
+[example_customer_search.json](example_customer_search.json)
 
 ### Domain Model
 
@@ -141,7 +142,7 @@ The following apps should be installed before running the application:
 
 <br/>
 
-### Running the app - Recipe Control API backend
+### Running the app - Customers Management API backend
 
 In order to run the application in development mode, apply the following steps:
 
@@ -246,16 +247,9 @@ Unit and Integration Tests are provided for services and controllers in the corr
 
 ### Troubleshooting
 
-Some problems can happen when there is any other process using the same port of the application, and _"ports are not available"_ or _"port is already in use"_ errors might be encountered.
-In this situation, terminating that process and restarting the related containers will fix the problem. If the problem continues,
-delete the containers (db, backend and frontend) and re-run the `docker compose` command in the previous step.
-
-<br/>
-
 ### Documentation
 
 [docker compose up](https://docs.docker.com/engine/reference/commandline/compose_up/)<br/>
-
 
 <br/>
 <br/>
