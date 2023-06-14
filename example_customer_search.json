@@ -1,0 +1,15 @@
+{
+  "dataOption":"any",
+  "searchCriteriaList":[
+    {
+      "key":"firstName",
+      "filter":"sw",
+      "value":"Jam"
+    },
+    {
+      "key":"address",
+      "filter":"cn",
+      "value":"Naef"
+    }
+  ]
+}

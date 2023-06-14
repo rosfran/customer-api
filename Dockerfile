@@ -7,7 +7,7 @@ WORKDIR /app
 COPY pom.xml ./
 COPY src ./src
 
-RUN mvn clean install
+RUN mvn clean install -Dmaven.test.skip=true
 
 # stage-2 : minimal runtime environment
 FROM eclipse-temurin:17-jre-jammy

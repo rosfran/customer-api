@@ -285,7 +285,7 @@ class CustomerControllerTest extends IntegrationTest {
                 .build();
 
 
-        // Create the Customer for Banana Au Termidor
+        // Create the Customer Gepeto
         MvcResult res = mvc.perform((post("/api/v1/customers")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req))))
