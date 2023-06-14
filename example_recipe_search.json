@@ -1,0 +1,20 @@
+{
+  "dataOption":"all",
+  "searchCriteriaList":[
+    {
+      "key":"name",
+      "filter":"eq",
+      "value":"Cantaloupe Gazpacho"
+    },
+    {
+      "key":"isVegetarian",
+      "filter":"eq",
+      "value":true
+    },
+    {
+      "key":"ingredient",
+      "filter":"cn",
+      "value":"toasted"
+    }
+  ]
+}

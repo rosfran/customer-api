@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiPagedResponse.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">customers-api</a> &gt; <a href="index.source.html" class="el_package">com.hr.management.dto.response</a> &gt; <span class="el_source">ApiPagedResponse.java</span></div><h1>ApiPagedResponse.java</h1><pre class="source lang-java linenums">package com.hr.management.dto.response;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+/**
+ * Represents the API response in a  format with  message and data
+ *
+ * @param &lt;T&gt;
+ */
+<span class="nc bnc" id="L11" title="All 28 branches missed.">@Data</span>
+<span class="fc" id="L12">@AllArgsConstructor</span>
+public class ApiPagedResponse&lt;T&gt; {
+
+<span class="fc" id="L15">    private final String message;</span>
+<span class="fc" id="L16">    private final T data;</span>
+<span class="fc" id="L17">    private final int page;</span>
+<span class="fc" id="L18">    private final int pageSize;</span>
+<span class="fc" id="L19">    private final int totalElements;</span>
+
+<span class="nc" id="L21">    public ApiPagedResponse(String message) {</span>
+<span class="nc" id="L22">        this.message = message;</span>
+<span class="nc" id="L23">        this.data = null;</span>
+<span class="nc" id="L24">        this.page = 0;</span>
+<span class="nc" id="L25">        this.pageSize = 0;</span>
+<span class="nc" id="L26">        this.totalElements = 0;</span>
+<span class="nc" id="L27">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

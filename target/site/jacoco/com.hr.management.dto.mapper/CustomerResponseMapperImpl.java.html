@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerResponseMapperImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">customers-api</a> &gt; <a href="index.source.html" class="el_package">com.hr.management.dto.mapper</a> &gt; <span class="el_source">CustomerResponseMapperImpl.java</span></div><h1>CustomerResponseMapperImpl.java</h1><pre class="source lang-java linenums">package com.hr.management.dto.mapper;
+
+import com.hr.management.dto.request.AddressRequest;
+import com.hr.management.dto.response.CustomerResponse;
+import com.hr.management.model.Address;
+import com.hr.management.model.Customer;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import javax.annotation.processing.Generated;
+import org.springframework.stereotype.Component;
+
+@Generated(
+    value = &quot;org.mapstruct.ap.MappingProcessor&quot;,
+    date = &quot;2023-06-14T18:45:30+0200&quot;,
+    comments = &quot;version: 1.5.3.Final, compiler: javac, environment: Java 17 (Homebrew)&quot;
+)
+@Component
+<span class="fc" id="L18">public class CustomerResponseMapperImpl implements CustomerResponseMapper {</span>
+
+    @Override
+    public Customer toEntity(CustomerResponse dto) {
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        if ( dto == null ) {</span>
+<span class="nc" id="L23">            return null;</span>
+        }
+
+<span class="nc" id="L26">        Customer.CustomerBuilder customer = Customer.builder();</span>
+
+<span class="nc" id="L28">        customer.id( dto.getId() );</span>
+<span class="nc" id="L29">        customer.firstName( dto.getFirstName() );</span>
+<span class="nc" id="L30">        customer.lastName( dto.getLastName() );</span>
+<span class="nc" id="L31">        customer.age( dto.getAge() );</span>
+<span class="nc" id="L32">        customer.createdAt( dto.getCreatedAt() );</span>
+<span class="nc" id="L33">        customer.addresses( addressRequestSetToAddressSet( dto.getAddresses() ) );</span>
+
+<span class="nc" id="L35">        return customer.build();</span>
+    }
+
+    @Override
+    public CustomerResponse toDto(Customer entity) {
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if ( entity == null ) {</span>
+<span class="nc" id="L41">            return null;</span>
+        }
+
+<span class="fc" id="L44">        CustomerResponse customerResponse = new CustomerResponse();</span>
+
+<span class="fc" id="L46">        customerResponse.setId( entity.getId() );</span>
+<span class="fc" id="L47">        customerResponse.setFirstName( entity.getFirstName() );</span>
+<span class="fc" id="L48">        customerResponse.setLastName( entity.getLastName() );</span>
+<span class="fc" id="L49">        customerResponse.setAge( entity.getAge() );</span>
+<span class="fc" id="L50">        customerResponse.setCreatedAt( entity.getCreatedAt() );</span>
+<span class="fc" id="L51">        customerResponse.setAddresses( addressSetToAddressRequestSet( entity.getAddresses() ) );</span>
+
+<span class="fc" id="L53">        return customerResponse;</span>
+    }
+
+    protected Address addressRequestToAddress(AddressRequest addressRequest) {
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if ( addressRequest == null ) {</span>
+<span class="nc" id="L58">            return null;</span>
+        }
+
+<span class="nc" id="L61">        Address address = new Address();</span>
+
+<span class="nc" id="L63">        address.setId( addressRequest.getId() );</span>
+<span class="nc" id="L64">        address.setStreetName( addressRequest.getStreetName() );</span>
+<span class="nc" id="L65">        address.setCity( addressRequest.getCity() );</span>
+<span class="nc" id="L66">        address.setCountry( addressRequest.getCountry() );</span>
+<span class="nc" id="L67">        address.setNumber( addressRequest.getNumber() );</span>
+
+<span class="nc" id="L69">        return address;</span>
+    }
+
+    protected Set&lt;Address&gt; addressRequestSetToAddressSet(Set&lt;AddressRequest&gt; set) {
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        if ( set == null ) {</span>
+<span class="nc" id="L74">            return null;</span>
+        }
+
+<span class="nc" id="L77">        Set&lt;Address&gt; set1 = new LinkedHashSet&lt;Address&gt;( Math.max( (int) ( set.size() / .75f ) + 1, 16 ) );</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">        for ( AddressRequest addressRequest : set ) {</span>
+<span class="nc" id="L79">            set1.add( addressRequestToAddress( addressRequest ) );</span>
+<span class="nc" id="L80">        }</span>
+
+<span class="nc" id="L82">        return set1;</span>
+    }
+
+    protected AddressRequest addressToAddressRequest(Address address) {
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">        if ( address == null ) {</span>
+<span class="nc" id="L87">            return null;</span>
+        }
+
+<span class="fc" id="L90">        AddressRequest.AddressRequestBuilder addressRequest = AddressRequest.builder();</span>
+
+<span class="fc" id="L92">        addressRequest.id( address.getId() );</span>
+<span class="fc" id="L93">        addressRequest.streetName( address.getStreetName() );</span>
+<span class="fc" id="L94">        addressRequest.city( address.getCity() );</span>
+<span class="fc" id="L95">        addressRequest.country( address.getCountry() );</span>
+<span class="fc" id="L96">        addressRequest.number( address.getNumber() );</span>
+
+<span class="fc" id="L98">        return addressRequest.build();</span>
+    }
+
+    protected Set&lt;AddressRequest&gt; addressSetToAddressRequestSet(Set&lt;Address&gt; set) {
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">        if ( set == null ) {</span>
+<span class="nc" id="L103">            return null;</span>
+        }
+
+<span class="fc" id="L106">        Set&lt;AddressRequest&gt; set1 = new LinkedHashSet&lt;AddressRequest&gt;( Math.max( (int) ( set.size() / .75f ) + 1, 16 ) );</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for ( Address address : set ) {</span>
+<span class="fc" id="L108">            set1.add( addressToAddressRequest( address ) );</span>
+<span class="fc" id="L109">        }</span>
+
+<span class="fc" id="L111">        return set1;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

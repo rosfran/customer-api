@@ -1,0 +1,16 @@
+package com.hr.management.repository;
+
+import com.hr.management.model.Address;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface AddressRepository extends JpaRepository<Address, Long> {
+
+    boolean existsByStreetNameIgnoreCase(String name);
+
+    List<Address> findAllByStreetName(String name);
+
+}

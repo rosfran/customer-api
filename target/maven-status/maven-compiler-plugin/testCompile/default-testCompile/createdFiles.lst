@@ -1,0 +1,8 @@
+com/hr/management/service/CustomerServiceTest.class
+com/hr/management/service/UserDetailsServiceImplTest.class
+com/hr/management/service/AuthServiceTest.class
+com/hr/management/controller/UserControllerTest.class
+com/hr/management/controller/CustomerControllerTest.class
+com/hr/management/service/RoleServiceTest.class
+com/hr/management/IntegrationTest.class
+com/hr/management/service/UserServiceTest.class

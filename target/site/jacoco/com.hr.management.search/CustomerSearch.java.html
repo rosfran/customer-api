@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CustomerSearch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">customers-api</a> &gt; <a href="index.source.html" class="el_package">com.hr.management.search</a> &gt; <span class="el_source">CustomerSearch.java</span></div><h1>CustomerSearch.java</h1><pre class="source lang-java linenums">package com.hr.management.search;
+
+
+import com.hr.management.model.Address;
+import com.hr.management.model.Customer;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
+
+import jakarta.persistence.criteria.*;
+import java.util.Objects;
+
+/**
+ * This is the parametrized Specification for our search criteria. It works creating the Predicates that will
+ * make the SQL query to gather data from the Database
+ *
+ * Here we must define the ways to handle matching fields with the referenced tables, like Address.
+ *
+ * This is a very powerful and flexible mechanism, where we can use some different ways of filtering out data
+ * using constructs like notLike, notContains, Contains, etc. *
+ */
+<span class="fc" id="L23">@Slf4j(topic = &quot;CustomerSearch&quot;)</span>
+public class CustomerSearch implements Specification&lt;Customer&gt; {
+
+    private final SearchCriteria searchCriteria;
+
+    public CustomerSearch(final SearchCriteria searchCriteria){
+<span class="fc" id="L29">        super();</span>
+<span class="fc" id="L30">        this.searchCriteria = searchCriteria;</span>
+<span class="fc" id="L31">    }</span>
+
+    @Override
+    public Predicate toPredicate(Root&lt;Customer&gt; root, CriteriaQuery&lt;?&gt; query, CriteriaBuilder cb) {
+
+        // lowercase the Value from SearchCriteria, this is useful to some operations like CONTAINS
+<span class="fc" id="L37">        String strToSearch = searchCriteria.getValue().toString().toLowerCase();</span>
+
+<span class="pc bpc" id="L39" title="12 of 15 branches missed.">        switch(Objects.requireNonNull(SearchOperation.getSimpleOperation(searchCriteria.getFilter()))){</span>
+            case CONTAINS:
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">                if(searchCriteria.getKey().equals(&quot;address&quot;) )</span>
+                {
+<span class="fc" id="L43">                    log.info(&quot;comparing CONTAINS origin {}&quot;, addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;));</span>
+<span class="fc" id="L44">                    return cb.or(</span>
+<span class="fc" id="L45">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;)), &quot;%&quot; + strToSearch + &quot;%&quot;),</span>
+<span class="fc" id="L46">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;city&quot;)), &quot;%&quot; + strToSearch + &quot;%&quot;),</span>
+<span class="fc" id="L47">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;country&quot;)), &quot;%&quot; + strToSearch + &quot;%&quot;)</span>
+                            );
+                }
+<span class="nc" id="L50">                return cb.like(cb.lower(root.get(searchCriteria.getKey())), &quot;%&quot; + strToSearch + &quot;%&quot;);</span>
+
+            case DOES_NOT_CONTAIN:
+<span class="nc bnc" id="L53" title="All 2 branches missed.">                if(searchCriteria.getKey().equals(&quot;address&quot;) )</span>
+                {
+<span class="nc" id="L55">                    log.info(&quot;comparing CONTAINS origin {}&quot;, addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;));</span>
+<span class="nc" id="L56">                    return cb.or(</span>
+<span class="nc" id="L57">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;)), &quot;%&quot; + strToSearch + &quot;%&quot;),</span>
+<span class="nc" id="L58">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;city&quot;)), &quot;%&quot; + strToSearch + &quot;%&quot;),</span>
+<span class="nc" id="L59">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;country&quot;)), &quot;%&quot; + strToSearch + &quot;%&quot;)</span>
+                    );
+                }
+<span class="nc" id="L62">                return cb.notLike(cb.lower(root.get(searchCriteria.getKey())), &quot;%&quot; + strToSearch + &quot;%&quot;);</span>
+            case STARTS_WITH:
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                if(searchCriteria.getKey().equals(&quot;address&quot;) )</span>
+                {
+<span class="nc" id="L66">                    log.info(&quot;comparing CONTAINS origin {}&quot;, addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;));</span>
+<span class="nc" id="L67">                    return cb.or(</span>
+<span class="nc" id="L68">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;)), strToSearch + &quot;%&quot;),</span>
+<span class="nc" id="L69">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;city&quot;)), strToSearch + &quot;%&quot;),</span>
+<span class="nc" id="L70">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;country&quot;)), strToSearch + &quot;%&quot;)</span>
+                    );
+                }
+<span class="nc" id="L73">                return cb.like(cb.lower(root.get(searchCriteria.getKey())), strToSearch + &quot;%&quot;);</span>
+
+            case DOES_NOT_START_WITH:
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                if(searchCriteria.getKey().equals(&quot;address&quot;) )</span>
+                {
+<span class="nc" id="L78">                    log.info(&quot;comparing CONTAINS origin {}&quot;, addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;));</span>
+<span class="nc" id="L79">                    return cb.or(</span>
+<span class="nc" id="L80">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;)), strToSearch + &quot;%&quot;),</span>
+<span class="nc" id="L81">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;city&quot;)), strToSearch + &quot;%&quot;),</span>
+<span class="nc" id="L82">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;country&quot;)), strToSearch + &quot;%&quot;)</span>
+                    );
+                }
+<span class="nc" id="L85">                return cb.notLike(cb.lower(root.get(searchCriteria.getKey())), strToSearch + &quot;%&quot;);</span>
+            case ENDS_WITH:
+<span class="nc bnc" id="L87" title="All 2 branches missed.">                if(searchCriteria.getKey().equals(&quot;address&quot;) )</span>
+                {
+<span class="nc" id="L89">                    log.info(&quot;comparing CONTAINS origin {}&quot;, addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;));</span>
+<span class="nc" id="L90">                    return cb.or(</span>
+<span class="nc" id="L91">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;)), &quot;%&quot;+strToSearch ),</span>
+<span class="nc" id="L92">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;city&quot;)), &quot;%&quot;+strToSearch ),</span>
+<span class="nc" id="L93">                            cb.like(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;country&quot;)), &quot;%&quot;+strToSearch )</span>
+                    );
+                }
+<span class="nc" id="L96">                return cb.like(cb.lower(root.get(searchCriteria.getKey())), &quot;%&quot;+strToSearch );</span>
+
+            case DOES_NOT_END_WITH:
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                if(searchCriteria.getKey().equals(&quot;address&quot;) )</span>
+                {
+<span class="nc" id="L101">                    log.info(&quot;comparing CONTAINS origin {}&quot;, addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;));</span>
+<span class="nc" id="L102">                    return cb.or(</span>
+<span class="nc" id="L103">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;)), &quot;%&quot;+strToSearch ),</span>
+<span class="nc" id="L104">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;city&quot;)), &quot;%&quot;+strToSearch ),</span>
+<span class="nc" id="L105">                            cb.notLike(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;country&quot;)), &quot;%&quot;+strToSearch )</span>
+                    );
+                }
+<span class="nc" id="L108">                return cb.notLike(cb.lower(root.get(searchCriteria.getKey())), &quot;%&quot;+strToSearch );</span>
+            case EQUAL:
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                if(searchCriteria.getKey().equals(&quot;address&quot;) )</span>
+                {
+<span class="nc" id="L112">                    log.info(&quot;comparing EQ origin {}&quot;, addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;));</span>
+<span class="nc" id="L113">                    return cb.or(</span>
+<span class="nc" id="L114">                            cb.equal(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;)), strToSearch ),</span>
+<span class="nc" id="L115">                            cb.equal(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;city&quot;)), strToSearch ),</span>
+<span class="nc" id="L116">                            cb.equal(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;country&quot;)), strToSearch )</span>
+                    );
+                }
+<span class="nc" id="L119">                return cb.equal(root.get(searchCriteria.getKey()), searchCriteria.getValue());</span>
+
+            case NOT_EQUAL:
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                if(searchCriteria.getKey().equals(&quot;address&quot;) )</span>
+                {
+<span class="nc" id="L124">                    log.info(&quot;comparing EQ origin {}&quot;, addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;));</span>
+<span class="nc" id="L125">                    return cb.or(</span>
+<span class="nc" id="L126">                            cb.notEqual(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;streetName&quot;)), strToSearch ),</span>
+<span class="nc" id="L127">                            cb.notEqual(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;city&quot;)), strToSearch ),</span>
+<span class="nc" id="L128">                            cb.notEqual(cb.lower(addressesJoinOrigin(root).&lt;String&gt;get(&quot;country&quot;)), strToSearch )</span>
+                    );
+                }
+<span class="nc" id="L131">                return cb.notEqual(root.get(searchCriteria.getKey()), searchCriteria.getValue());</span>
+            case NUL:
+<span class="nc" id="L133">                return cb.isNull(root.get(searchCriteria.getKey()));</span>
+
+            case NOT_NULL:
+<span class="nc" id="L136">                return cb.isNotNull(root.get(searchCriteria.getKey()));</span>
+
+            case GREATER_THAN:
+<span class="fc" id="L139">                return cb.greaterThan(root.&lt;String&gt; get(searchCriteria.getKey()), searchCriteria.getValue().toString());</span>
+
+            case GREATER_THAN_EQUAL:
+<span class="nc" id="L142">                return cb.greaterThanOrEqualTo(root.&lt;String&gt; get(searchCriteria.getKey()), searchCriteria.getValue().toString());</span>
+
+            case LESS_THAN:
+<span class="nc" id="L145">                return cb.lessThan(root.&lt;String&gt; get(searchCriteria.getKey()), searchCriteria.getValue().toString());</span>
+
+            case LESS_THAN_EQUAL:
+<span class="fc" id="L148">                return cb.lessThanOrEqualTo(root.&lt;String&gt; get(searchCriteria.getKey()), searchCriteria.getValue().toString());</span>
+        }
+<span class="nc" id="L150">        return null;</span>
+    }
+
+    private SetJoin&lt;Customer, Address&gt; addressesJoinOrigin(Root&lt;Customer&gt; root){
+<span class="fc" id="L154">        return root.joinSet(&quot;addresses&quot;, JoinType.LEFT);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

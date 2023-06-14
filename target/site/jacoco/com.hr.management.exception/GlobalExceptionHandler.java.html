@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GlobalExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">customers-api</a> &gt; <a href="index.source.html" class="el_package">com.hr.management.exception</a> &gt; <span class="el_source">GlobalExceptionHandler.java</span></div><h1>GlobalExceptionHandler.java</h1><pre class="source lang-java linenums">package com.hr.management.exception;
+
+import com.hr.management.common.Constants;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.Objects;
+
+/**
+ * Global exception handler class for handling all the exceptions
+ */
+<span class="fc" id="L24">@Slf4j(topic = &quot;GlobalExceptionHandler&quot;)</span>
+@RestControllerAdvice
+<span class="fc" id="L26">public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {</span>
+
+    /**
+     * This parameter is used to print StackTrace while debugging. Its value is false by default.
+     */
+    @Value(&quot;${exception.trace:false}&quot;)
+    private boolean printStackTrace;
+
+    /**
+     * Handles MethodArgumentNotValidException
+     *
+     * @param ex
+     * @param headers
+     * @param statusCode
+     * @param request
+     * @return ResponseEntity&lt;Object&gt; with detailed information related to the error
+     */
+    @Override
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    protected ResponseEntity&lt;Object&gt; handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode statusCode,
+                                                                  WebRequest request) {
+<span class="nc" id="L49">        log.error(Constants.METHOD_ARGUMENT_NOT_VALID, ex);</span>
+<span class="nc" id="L50">        final ErrorResponse errorResponse = new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), Constants.VALIDATION_ERROR);</span>
+<span class="nc bnc" id="L51" title="All 2 branches missed.">        for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {</span>
+<span class="nc" id="L52">            errorResponse.addValidationError(fieldError.getField(), fieldError.getDefaultMessage());</span>
+<span class="nc" id="L53">        }</span>
+<span class="nc" id="L54">        return ResponseEntity.unprocessableEntity().body(errorResponse);</span>
+    }
+
+    /**
+     * Handles NoSuchElementFoundException
+     *
+     * @param ex
+     * @param request
+     * @return ResponseEntity&lt;Object&gt; with detailed information related to the error
+     */
+    @ExceptionHandler(NoSuchElementFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity&lt;Object&gt; handleNoSuchElementFoundException(NoSuchElementFoundException ex, WebRequest request) {
+<span class="fc" id="L67">        log.error(Constants.NOT_FOUND, ex);</span>
+<span class="fc" id="L68">        return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);</span>
+    }
+
+    /**
+     * Handles ElementAlreadyExistsException
+     *
+     * @param ex
+     * @param request
+     * @return ResponseEntity&lt;Object&gt; with detailed information related to the error
+     */
+    @ExceptionHandler(ElementAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity&lt;Object&gt; handleElementAlreadyExistsException(ElementAlreadyExistsException ex, WebRequest request) {
+<span class="nc" id="L81">        log.error(Constants.ALREADY_EXISTS, ex);</span>
+<span class="nc" id="L82">        return buildErrorResponse(ex, HttpStatus.CONFLICT, request);</span>
+    }
+
+    /**
+     * Handles all the uncaught exceptions that cannot be caught by the previous methods
+     *
+     * @param ex
+     * @param request
+     * @return ResponseEntity&lt;Object&gt; with detailed information related to the error
+     */
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity&lt;Object&gt; handleAllUncaughtException(Exception ex, WebRequest request) {
+<span class="fc" id="L95">        log.error(ex.getMessage(), ex);</span>
+<span class="fc" id="L96">        return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);</span>
+    }
+
+    /**
+     * Build error message by the given exception, status and request
+     *
+     * @param ex
+     * @param statusCode
+     * @param request
+     * @return ResponseEntity&lt;Object&gt; with detailed information related to the error
+     */
+    private ResponseEntity&lt;Object&gt; buildErrorResponse(Exception ex,
+                                                      HttpStatusCode statusCode,
+                                                      WebRequest request) {
+<span class="fc" id="L110">        return buildErrorResponse(ex, ex.getMessage(), statusCode, request);</span>
+    }
+
+    /**
+     * Build error message by the given exception, message, status and request
+     *
+     * @param ex
+     * @param message
+     * @param statusCode
+     * @param request
+     * @return ResponseEntity&lt;Object&gt; with detailed information related to the error
+     */
+    private ResponseEntity&lt;Object&gt; buildErrorResponse(Exception ex,
+                                                      String message,
+                                                      HttpStatusCode statusCode,
+                                                      WebRequest request) {
+<span class="fc" id="L126">        final ErrorResponse errorResponse = new ErrorResponse(statusCode.value(), message);</span>
+<span class="pc bpc" id="L127" title="2 of 4 branches missed.">        if (printStackTrace &amp;&amp; isTraceOn(request)) {</span>
+<span class="nc" id="L128">            errorResponse.setStackTrace(ExceptionUtils.getStackTrace(ex));</span>
+        }
+<span class="fc" id="L130">        return ResponseEntity.status(statusCode).body(errorResponse);</span>
+    }
+
+    /**
+     * Checks the tracing parameter sent by request
+     *
+     * @param request
+     * @return the tracing status based on the request
+     */
+    private boolean isTraceOn(WebRequest request) {
+<span class="fc" id="L140">        String[] value = request.getParameterValues(Constants.TRACE);</span>
+<span class="pc bpc" id="L141" title="3 of 4 branches missed.">        return Objects.nonNull(value)</span>
+                &amp;&amp; value.length &gt; 0
+<span class="pc bnc" id="L143" title="All 2 branches missed.">                &amp;&amp; value[0].contentEquals(&quot;true&quot;);</span>
+    }
+
+    /**
+     * Handles internal exceptions
+     *
+     * @param ex
+     * @param body
+     * @param headers
+     * @param statusCode
+     * @param request
+     * @return ResponseEntity&lt;Object&gt; with detailed information related to the error
+     */
+    @Override
+    public ResponseEntity&lt;Object&gt; handleExceptionInternal(
+            Exception ex,
+            Object body,
+            HttpHeaders headers,
+            HttpStatusCode statusCode,
+            WebRequest request) {
+<span class="nc" id="L163">        return buildErrorResponse(ex, statusCode, request);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">customers-api</a> &gt; <a href="index.source.html" class="el_package">com.hr.management.service</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package com.hr.management.service;
+
+import com.hr.management.dto.mapper.UserRequestMapper;
+import com.hr.management.dto.mapper.UserResponseMapper;
+import com.hr.management.dto.request.ProfileRequest;
+import com.hr.management.dto.request.UserRequest;
+import com.hr.management.dto.response.CommandResponse;
+import com.hr.management.dto.response.UserResponse;
+import com.hr.management.model.Role;
+import com.hr.management.model.RoleType;
+import com.hr.management.model.User;
+import com.hr.management.repository.UserRepository;
+import com.hr.management.exception.NoSuchElementFoundException;
+import com.hr.management.exception.ElementAlreadyExistsException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.text.WordUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.hr.management.common.Constants.*;
+
+/**
+ * Service used for User related operations
+ */
+<span class="fc" id="L33">@Slf4j(topic = &quot;UserService&quot;)</span>
+@Service
+<span class="fc" id="L35">@RequiredArgsConstructor</span>
+public class UserService {
+
+    private final PasswordEncoder encoder;
+    private final UserRepository userRepository;
+    private final UserRequestMapper userRequestMapper;
+    private final UserResponseMapper userResponseMapper;
+
+    /**
+     * Fetches a single user by the given id
+     *
+     * @param id
+     * @return UserResponse
+     */
+    public UserResponse findById(long id) {
+<span class="fc" id="L50">        return userRepository.findById(id)</span>
+<span class="fc" id="L51">                .map(userResponseMapper::toDto)</span>
+<span class="fc" id="L52">                .orElseThrow(() -&gt; new NoSuchElementFoundException(NOT_FOUND_USER));</span>
+    }
+
+    /**
+     * Fetches a single user by the given id
+     *
+     * @param
+     * @return UserResponse
+     */
+    public UserResponse findByName(String username) {
+<span class="nc" id="L62">        return userRepository.findByUsername(username)</span>
+<span class="nc" id="L63">                .map(userResponseMapper::toDto)</span>
+<span class="nc" id="L64">                .orElseThrow(() -&gt; new NoSuchElementFoundException(NOT_FOUND_USER));</span>
+    }
+
+    /**
+     * Fetches a single user (entity) by the given id
+     *
+     * @param id
+     * @return User
+     */
+    public User getById(long id) {
+<span class="pc" id="L74">        return userRepository.findById(id)</span>
+<span class="pc" id="L75">                .orElseThrow(() -&gt; new NoSuchElementFoundException(NOT_FOUND_USER));</span>
+    }
+
+    /**
+     * Fetches all users based on the given paging and sorting parameters
+     *
+     * @param pageable
+     * @return List of UserResponse
+     */
+    @Transactional(readOnly = true)
+    public Page&lt;UserResponse&gt; findAll(Pageable pageable) {
+<span class="fc" id="L86">        final Page&lt;UserResponse&gt; users = userRepository.findAll(pageable)</span>
+<span class="fc" id="L87">                .map(userResponseMapper::toDto);</span>
+
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (users.isEmpty())</span>
+<span class="fc" id="L90">            throw new NoSuchElementFoundException(NOT_FOUND_RECORD);</span>
+<span class="nc" id="L91">        return users;</span>
+    }
+
+    /**
+     * Creates a new user using the given request parameters
+     *
+     * @param request
+     * @return id of the created user
+     */
+    public CommandResponse create(UserRequest request) {
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        if (userRepository.existsByUsernameIgnoreCase(request.getUsername()))</span>
+<span class="fc" id="L102">            throw new ElementAlreadyExistsException(ALREADY_EXISTS_USER);</span>
+
+        // add default role (ROLE_USER) to the user
+<span class="nc" id="L105">        final Set&lt;Role&gt; roles = new HashSet&lt;&gt;(Arrays.asList(new Role(1L, RoleType.ROLE_USER)));</span>
+
+        // add ROLE_ADMIN role if requested by admin
+<span class="nc bnc" id="L108" title="All 4 branches missed.">        if (request.getRoles() != null &amp;&amp; request.getRoles().contains(RoleType.ROLE_ADMIN.name()))</span>
+<span class="nc" id="L109">            roles.add(new Role(2L, RoleType.ROLE_ADMIN));</span>
+
+<span class="nc" id="L111">        final User user = userRequestMapper.toEntity(request);</span>
+<span class="nc" id="L112">        user.setPassword(encoder.encode(request.getPassword()));</span>
+<span class="nc" id="L113">        user.setRoles(roles);</span>
+<span class="nc" id="L114">        userRepository.save(user);</span>
+<span class="nc" id="L115">        log.info(CREATED_USER);</span>
+<span class="nc" id="L116">        return CommandResponse.builder().id(user.getId()).build();</span>
+    }
+
+    /**
+     * Updates user using the given request parameters
+     *
+     * @param request
+     * @return id of the updated user
+     */
+    public CommandResponse update(ProfileRequest request) {
+<span class="fc" id="L126">        final User user = userRepository.findById(request.getId())</span>
+<span class="pc" id="L127">                .orElseThrow(() -&gt; new NoSuchElementFoundException(NOT_FOUND_USER));</span>
+
+        // update admin role of the user based on the request
+<span class="nc bnc" id="L130" title="All 4 branches missed.">        if (request.getRoles() != null &amp;&amp; request.getRoles().contains(RoleType.ROLE_ADMIN.name()))</span>
+<span class="nc" id="L131">            user.addRole(new Role(2L, RoleType.ROLE_ADMIN));</span>
+        else
+<span class="nc" id="L133">            user.removeRole(new Role(2L, RoleType.ROLE_ADMIN));</span>
+
+<span class="nc" id="L135">        user.setFirstName(WordUtils.capitalizeFully(request.getFirstName()));</span>
+<span class="nc" id="L136">        user.setLastName(WordUtils.capitalizeFully(request.getLastName()));</span>
+<span class="nc" id="L137">        userRepository.save(user);</span>
+<span class="nc" id="L138">        log.info(UPDATED_USER);</span>
+<span class="nc" id="L139">        return CommandResponse.builder().id(user.getId()).build();</span>
+    }
+
+    /**
+     * Updates user profile by Full Name (First Name and Last Name fields)
+     *
+     * @param request
+     * @return id of the updated user
+     */
+    public CommandResponse updateFullName(ProfileRequest request) {
+<span class="fc" id="L149">        final User user = userRepository.findById(request.getId())</span>
+<span class="pc" id="L150">                .orElseThrow(() -&gt; new NoSuchElementFoundException(NOT_FOUND_USER));</span>
+
+<span class="nc" id="L152">        user.setFirstName(WordUtils.capitalizeFully(request.getFirstName()));</span>
+<span class="nc" id="L153">        user.setLastName(WordUtils.capitalizeFully(request.getLastName()));</span>
+<span class="nc" id="L154">        userRepository.save(user);</span>
+<span class="nc" id="L155">        log.info(UPDATED_USER);</span>
+<span class="nc" id="L156">        return CommandResponse.builder().id(user.getId()).build();</span>
+    }
+
+    /**
+     * Deletes user by the given id
+     *
+     * @param id
+     */
+    public void deleteById(long id) {
+<span class="fc" id="L165">        final User user = userRepository.findById(id)</span>
+<span class="pc" id="L166">                .orElseThrow(() -&gt; new NoSuchElementFoundException(NOT_FOUND_USER));</span>
+<span class="nc" id="L167">        userRepository.delete(user);</span>
+<span class="nc" id="L168">        log.info(DELETED_USER);</span>
+<span class="nc" id="L169">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

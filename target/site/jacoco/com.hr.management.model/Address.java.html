@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Address.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">customers-api</a> &gt; <a href="index.source.html" class="el_package">com.hr.management.model</a> &gt; <span class="el_source">Address.java</span></div><h1>Address.java</h1><pre class="source lang-java linenums">package com.hr.management.model;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import lombok.*;
+
+@Getter
+<span class="fc" id="L8">@Setter</span>
+@Entity
+<span class="fc" id="L10">@NoArgsConstructor</span>
+<span class="nc" id="L11">@AllArgsConstructor</span>
+public class Address {
+
+    @Id
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = &quot;sequence-address&quot;
+    )
+
+    @SequenceGenerator(
+            name = &quot;sequence-address&quot;,
+            sequenceName = &quot;sequence_address&quot;,
+            allocationSize = 5
+    )
+<span class="fc" id="L25">    private Long id;</span>
+
+<span class="nc" id="L27">    public Address(String streetName ) {</span>
+<span class="nc" id="L28">        this.streetName = streetName;</span>
+<span class="nc" id="L29">    }</span>
+
+<span class="nc" id="L31">    public Address(String streetName, Integer number, String city, String country ) {</span>
+<span class="nc" id="L32">        this.streetName = streetName;</span>
+<span class="nc" id="L33">        this.city = city;</span>
+
+<span class="nc" id="L35">        this.country = country;</span>
+
+<span class="nc" id="L37">        this.number = number;</span>
+<span class="nc" id="L38">    }</span>
+
+    @Column(length = 300, nullable = true, unique = true)
+<span class="fc" id="L41">    private String streetName;</span>
+
+    @Column(length = 300, nullable = false, unique = true)
+<span class="fc" id="L44">    private String city;</span>
+
+    @Column(length = 300, nullable = false, unique = true)
+<span class="fc" id="L47">    private String country;</span>
+
+    @Column(nullable = false)
+<span class="fc" id="L50">    private Integer number;</span>
+
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = &quot;customer_id&quot;, referencedColumnName = &quot;id&quot;, nullable = false)
+<span class="nc" id="L55">    private Customer customer;</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
