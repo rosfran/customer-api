@@ -102,7 +102,7 @@ class AuthServiceTest {
         request.setUsername(username);
         request.setPassword(password);
 
-        Set<Role> roles = new HashSet<>(Arrays.asList(new Role(1L, RoleType.ROLE_USER)));
+        Set<Role> roles = new HashSet<>(List.of(new Role(1L, RoleType.ROLE_USER)));
 
         when(userRepository.existsByUsernameIgnoreCase(username)).thenReturn(false);
         when(userRequestMapper.toEntity(request)).thenReturn(user);
@@ -129,9 +129,7 @@ class AuthServiceTest {
 
         when(userRepository.existsByUsernameIgnoreCase(username)).thenReturn(true);
 
-        assertThrows(ElementAlreadyExistsException.class, () -> {
-            authService.signup(request);
-        });
+        assertThrows(ElementAlreadyExistsException.class, () -> authService.signup(request));
 
         verify(userRepository, never()).save(any());
     }
